@@ -1,0 +1,21 @@
+# Python
+venv/
+myenv/
+myenv313/
+__pycache__/
+*.pyc
+
+# Environment variables - never commit credentials
+.env
+
+# Raw data - too large, belongs in cloud storage not GitHub
+raw_data/
+
+# dbt
+target/
+dbt_packages/
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
