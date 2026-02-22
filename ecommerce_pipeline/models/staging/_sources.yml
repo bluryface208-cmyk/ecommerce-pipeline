@@ -1,0 +1,33 @@
+sources:
+  - name: raw
+    database: ECOMMERCE_DB
+    schema: RAW
+    tables:
+      - name: raw_customers
+        identifier: raw_customers
+        description: "Raw customers data ingested from CSV file"
+      - name: raw_orders
+        identifier: raw_orders
+        description: "Raw orders data ingested from CSV file"
+      - name: raw_order_items
+        identifier: raw_order_items
+        description: "Raw order items data ingested from CSV file"
+      - name: raw_products
+        identifier: raw_products
+        description: "Raw products data ingested from CSV file"
+      - name: raw_category_translation
+        identifier: raw_category_translation
+        description: "Raw category translation data ingested from CSV file"
+      - name: raw_sellers
+        identifier: raw_sellers
+        description: "Raw sellers data ingested from CSV file"
+      - name: raw_geolocation
+        identifier: raw_geolocation
+        description: "Raw geolocation data ingested from CSV file"           
+      - name: raw_reviews
+        identifier: raw_reviews
+        description: "Raw reviews data ingested from CSV file"      
+      - name: raw_payments  
+        identifier: raw_payments
+        description: "Raw payments data ingested from CSV file" 
+      

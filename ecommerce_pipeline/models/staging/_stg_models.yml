@@ -1,0 +1,254 @@
+models:
+  - name: stg_customers
+    description: "This model is responsible for staging the customers data. It selects relevant columns from the raw_customers source and performs necessary transformations, such as renaming columns and casting data types, to prepare the data for further analysis and modeling in the data warehouse."
+    columns:
+      - name: customer_id
+        description: "Unique identifier for each customer."
+        tests:
+          - not_null
+          - unique
+      - name: customer_unique_id
+        description: "Unique identifier for each customer across all orders."
+        tests:
+          - not_null
+      - name: customer_zip_code_prefix
+        description: "Zip code prefix of the customer's location."
+        tests:
+          - not_null
+      - name: city
+        description: "City of the customer's location."
+        tests:
+          - not_null
+      - name: state
+        description: "State of the customer's location."
+        tests:
+          - not_null
+  - name: stg_order_items
+    description: "This model is responsible for staging the order items data. It selects relevant columns from the raw_order_items source and performs necessary transformations, such as renaming columns and casting data types, to prepare the data for further analysis and modeling in the data warehouse."
+    tests:
+      - unique:
+          column_name: "order_id || '-' || order_item_id"
+    columns:
+      - name: order_id
+        description: "Unique identifier for each order."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: order_item_id
+        description: "Unique identifier for each item within an order."
+        tests:
+          - not_null
+      - name: product_id
+        description: "Identifier for the product associated with the order item."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
+      - name: seller_id
+        description: "Identifier for the seller associated with the order item."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_sellers')
+                field: seller_id
+      - name: shipping_limit_date
+        description: "The date by which the order item should be shipped."
+        tests:
+          - not_null
+      - name: price
+        description: "Price of the order item."
+        tests:
+          - not_null
+      - name: freight_value
+        description: "Freight value for the order item."
+        tests:
+          - not_null
+  - name: stg_category_translation 
+    description: "This model is responsible for staging the category translation data. It selects relevant columns from the raw_category_translation source and performs necessary transformations, such as renaming columns, to prepare the data for further analysis and modeling in the data warehouse."
+    columns:
+      - name: category_name_portuguese
+        description: "Category name in Portuguese."
+        tests:
+          - not_null
+          - unique
+      - name: category_name_english
+        description: "Category name in English."
+  - name: stg_sellers
+    description: "This model is responsible for staging the sellers data. It selects relevant columns from the raw_sellers source and performs necessary transformations, such as renaming columns, to prepare the data for further analysis and modeling in the data warehouse."
+    columns:
+      - name: seller_id
+        description: "Unique identifier for each seller."
+        tests:
+          - not_null
+          - unique
+      - name: seller_zip_code_prefix
+        description: "Zip code prefix of the seller's location."
+        tests:
+          - not_null
+      - name: city
+        description: "City of the seller's location."
+        tests:
+          - not_null
+      - name: state
+        description: "State of the seller's location."
+        tests:
+          - not_null         
+  - name: stg_geolocation
+    description: "This model is responsible for staging the geolocation data. It selects relevant columns from the raw_geolocation source and performs necessary transformations, such as renaming columns and casting data types, to prepare the data for further analysis and modeling in the data warehouse."
+    columns:
+      - name: zip_code_prefix
+        description: "Zip code prefix of the geolocation."
+        tests:
+          - not_null
+      - name: latitude
+        description: "Latitude coordinate of the geolocation."
+        tests:
+          - not_null
+      - name: longitude
+        description: "Longitude coordinate of the geolocation."
+        tests:
+          - not_null   
+      - name: city
+        description: "City of the geolocation."    
+        tests:
+          - not_null
+      - name: state
+        description: "State of the geolocation."
+        tests:
+          - not_null  
+  - name: stg_reviews   
+    description: "This model is responsible for staging the reviews data. It selects relevant columns from the raw_reviews source and performs necessary transformations, such as renaming columns and casting data types, to prepare the data for further analysis and modeling in the data warehouse."
+    columns:
+      - name: review_id
+        description: "Unique identifier for each review."
+        tests:
+          - not_null  
+      - name: order_id
+        description: "Unique identifier for each order associated with the review."
+        tests:
+          - not_null 
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: review_score
+        description: "Rating given by the customer for the order."
+        tests:    
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5]
+      - name: review_comment_title
+        description: "Title of the review comment."  
+      - name: review_comment_message
+        description: "Message of the review comment."  
+      - name: review_creation_date
+        description: "Date when the review was created."    
+        tests:
+          - not_null    
+      - name: review_answer_date
+        description: "Date and time when the review was answered by the customer."
+        tests:
+          - not_null  
+  - name: stg_payments
+    description: "This model is responsible for staging the payments data. It selects relevant columns from the raw_payments source and performs necessary transformations, such as renaming columns and casting data types, to prepare the data for further analysis and modeling in the data warehouse."
+    tests:
+      - unique:
+          column_name: "order_id || '-' || payment_sequential::varchar"
+    columns:
+      - name: order_id
+        description: "Unique identifier for each order associated with the payment."
+        tests:
+          - not_null 
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: payment_sequential
+        description: "Sequential number of the payment for a given order."
+        tests:
+          - not_null  
+      - name: payment_type
+        description: "Type of payment used for the order."
+        tests:
+          - not_null 
+          - accepted_values:
+              arguments:
+                values: ['credit_card', 'boleto', 'voucher', 'debit_card', 'not_defined']
+      - name: payment_installments
+        description: "Number of installments for the payment."
+        tests:
+          - not_null  
+      - name: payment_value
+        description: "Total value of the payment."
+        tests:
+          - not_null
+  - name: stg_orders
+    description: "This model is responsible for staging the orders data. It selects relevant columns from the raw_orders source and performs necessary transformations, such as renaming columns and casting data types, to prepare the data for further analysis and modeling in the data warehouse."
+    columns:  
+      - name: order_id
+        description: "Unique identifier for each order."
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: "Identifier for the customer associated with the order."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
+      - name: order_status
+        description: "Current status of the order."
+        tests:
+          - not_null  
+          - accepted_values:
+              arguments:
+                values: ['created', 'approved', 'invoiced', 'shipped', 'delivered', 'canceled', 'unavailable', 'processing']
+      - name: purchase_date
+        description: "Date when the order was placed."
+        tests:
+          - not_null  
+      - name: approved_at
+        description: "Timestamp when the order was approved."
+      - name: delivered_carrier_date
+        description: "Timestamp when the order was delivered to the carrier."
+      - name: delivered_customer_date
+        description: "Timestamp when the order was delivered to the customer."
+      - name: estimated_delivery_date
+        description: "Estimated delivery date for the order."
+        tests:
+          - not_null
+  - name: stg_products
+    description: "This model is responsible for staging the products data. It selects relevant columns from the raw_products source and performs necessary transformations, such as renaming columns and casting data types, to prepare the data for further analysis and modeling in the data warehouse."
+    columns:
+      - name: product_id
+        description: "Unique identifier for each product."
+        tests:
+          - not_null
+          - unique
+      - name: product_category_name
+        description: "Category name of the product in Portuguese."
+      - name: product_name_length
+        description: "Length of the product name." 
+      - name: product_description_length
+        description: "Length of the product description."
+      - name: product_photos_qty
+        description: "Quantity of photos available for the product." 
+      - name: product_weight_g
+        description: "Weight of the product in grams."
+      - name: product_length_cm
+        description: "Length of the product in centimeters." 
+      - name: product_height_cm
+        description: "Height of the product in centimeters." 
+      - name: product_width_cm
+        description: "Width of the product in centimeters."
+      
+  
