@@ -216,7 +216,7 @@ models:
         description: "Date when the order was placed."
         tests:
           - not_null  
-      - name: approved_at
+      - name: approved_date
         description: "Timestamp when the order was approved."
       - name: delivered_carrier_date
         description: "Timestamp when the order was delivered to the carrier."
