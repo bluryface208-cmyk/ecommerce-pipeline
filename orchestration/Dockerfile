@@ -6,4 +6,5 @@ RUN pip install --no-cache-dir \
     dbt-snowflake==1.11.2 \
     snowflake-connector-python \
     pandas \
-    python-dotenv
+    python-dotenv \
+    apache-airflow-providers-slack
