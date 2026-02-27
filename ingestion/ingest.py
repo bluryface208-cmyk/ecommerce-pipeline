@@ -24,7 +24,8 @@ FILES = {
 }
 
 
-RAW_DATA_PATH = "C:\\Users\\zinga\\DEV\\ecommerce-pipeline\\raw_data"
+# RAW_DATA_PATH = "C:\\Users\\zinga\\DEV\\ecommerce-pipeline\\raw_data"
+RAW_DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "raw_data")
 STAGE_NAME    = "ECOMMERCE_DB.RAW.ECOMMERCE_STAGE"
 
 # ----------------------------------------
