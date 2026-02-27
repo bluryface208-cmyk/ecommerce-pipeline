@@ -9,9 +9,10 @@ WITH sellers AS (
 geolocation AS (
   SELECT 
     zip_code_prefix,
-    latitude,
-    longitude
+    AVG(latitude) as latitude,
+    AVG(longitude) as longitude
   FROM {{ ref('stg_geolocation') }}
+  GROUP BY zip_code_prefix
 ),
 orders AS (
   SELECT 

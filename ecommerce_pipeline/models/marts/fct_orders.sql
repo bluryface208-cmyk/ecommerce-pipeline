@@ -12,7 +12,8 @@ order_items AS (
   SELECT 
     order_id,
     COUNT(product_id) as total_items,
-    SUM(price) as total_price
+    SUM(price) as total_price,
+    MAX(seller_id) as seller_id
   FROM {{ ref('stg_order_items') }}
     GROUP BY order_id
 ),
@@ -30,6 +31,7 @@ final AS (
     SELECT
         orders.order_id,
         orders.customer_id,
+        order_items.seller_id,
         orders.order_status,
         orders.purchase_date,
         orders.delivered_customer_date,
